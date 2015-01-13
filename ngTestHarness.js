@@ -258,7 +258,7 @@
             this._callBackend ({
                 verb: opts.verb || 'GET',
                 url: opts.url || '',
-                requestData: opts.data || undefined,
+                requestData: opts.requestData || undefined,
                 responseStatus: opts.responseStatus || 200,
                 responseData: opts.responseData || '',
                 requestHeaders: opts.requestHeaders,
