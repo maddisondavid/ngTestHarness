@@ -9,13 +9,7 @@ Streamlines the boilerplate created by needing to inject dependencies for Angula
 
 Additional modules, should be included in the modules parameter.
 
-##Options Object
-```
-{
-  cookies: true/false
-}
-```
-* cookies - Loads the ngCookies module.  Make sure the angular-cookies javascript file is included in your test runner file or configuration.
+_Note: Loading ngCookies adds new functionality to the testing harness. (Please see handleCookie in the API)_
 
 ##API
 <a href="api.md">API</a>
@@ -117,6 +111,9 @@ describe ("Load Sample\n", function (){
 
 ##License
 [MIT License](LICENSE.md)
+
+##Articles
+* [ngTestHarness: Strap in with this new testing helper for Angular](http://randomjavascript.blogspot.com/2015/01/ngtestharness-strap-in-with-this-new.html)
 
 Copyright (c) 2014-2015 Gaikai Inc. (A Sony Computer Entertainment Company).
 Visit us at https://gaikai.com/ for more information.

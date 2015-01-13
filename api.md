@@ -7,6 +7,7 @@
 
 **Functions**
 
+* [handleCookie(key, value)](#handleCookie)
 * [compileElement(html, vars)](#compileElement)
 * [getIsolate(html, vars)](#getIsolate)
 * [getScope(html, vars)](#getScope)
@@ -48,6 +49,16 @@
 - modules `array` - Names of modules to be loaded into the context  
 - options `object` - Key value pairs for context creation.  Currently supports cookies: true  
 
+<a name="handleCookie"></a>
+#handleCookie(key, value)
+Adds a cookie, by key and value, into the Angular $cookieStore.
+
+**Params**
+
+- key `string` - ID for the value.  
+- value `object` - Value to be stored.  
+
+**Returns**:  - the cookie information as determined by $cookieStore.  
 <a name="compileElement"></a>
 #compileElement(html, vars)
 Create the html context and scope
