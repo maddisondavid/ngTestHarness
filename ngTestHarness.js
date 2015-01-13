@@ -34,7 +34,8 @@
         '$timeout',
         '$interval',
         '$browser',
-        '$q'
+        '$q',
+        '$filter'
     ];
 
     /** @ignore */
