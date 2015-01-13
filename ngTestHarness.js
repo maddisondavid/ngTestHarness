@@ -21,41 +21,55 @@
 (function(angular) {
     'use strict';
 
-    /**  @ignore */
-    var ngTestHarness = function(modules, options) {
+    /* A constant list of commonly used Angular providers
+     * These will be exposed through ngTestHarness()[provider]
+     * in a non-$ syntax, e.g. ngTestHarness().q
+     */
+    var providers = [
+        '$rootScope',
+        '$compile',
+        '$http',
+        '$httpBackend',
+        '$templateCache',
+        '$timeout',
+        '$interval',
+        '$browser',
+        '$q'
+    ];
+
+    /** @ignore */
+    var ngTestHarness = function(modules) {
 
         // Add in Angular, Sanitize, and Mock as default modules.
         modules.unshift('ng', 'ngSanitize', 'ngMock');
 
-        //Angular cookies
-        if (options && options.cookies) {
-            modules.push('ngCookies');
-        }
-
         //Angular's services that will be used by the rest of the object's functions, and that should be externally accessible
         this.angularFactory = angular.injector(modules);
-        this.rootScope = this.angularFactory.get('$rootScope');
-        this.compile = this.angularFactory.get('$compile');
-        this.http = this.angularFactory.get('$http');
-        this.httpBackend = this.angularFactory.get('$httpBackend');
-        this.templates = this.angularFactory.get('$templateCache');
-        this.timeout = this.angularFactory.get('$timeout');
-        this.interval = this.angularFactory.get('$interval');
-        this.browser = this.angularFactory.get('$browser');
-        this.q = this.angularFactory.get('$q');
+
+        // Each factory gets placed on ngTestHarness, accessible through a non-$ method.
+        providers.forEach(function(provider) {
+            this[provider.slice(1)] = this.angularFactory.get(provider);
+        }, this);
 
         //if cookie mocking is requested, then add the needed pieces
-        if (options && options.cookies) {
+        if (modules.indexOf('ngCookies') > -1) {
             this.cookieStore = this.angularFactory.get('$cookieStore');
             this.cookies = [];
+
+            /**
+             * @function handleCookie
+             * @desc Adds a cookie, by key and value, into the Angular $cookieStore.
+             * @param {string} key ID for the value.
+             * @param {object} value Value to be stored.
+             * @return the cookie information as determined by $cookieStore.
+             */
             this.handleCookie = function(key, value) {
                 if (value) {
                     this.cookieStore.put(key, value);
                     this.cookies.push(key);
-                    return true;
-                } else {
-                    return this.cookieStore.get(key);
                 }
+
+                return this.cookieStore.get(key);
             };
         }
     };
@@ -290,7 +304,7 @@
             @param {number} timeout The timeout promise to cancel. Will trigger the timeout's reject function.
         */
         cancelTimeout: function(timeout) {
-            if ( timeout ) {
+            if (timeout) {
                 this.timeout.cancel(timeout);
             }
         },

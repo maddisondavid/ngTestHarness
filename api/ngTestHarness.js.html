@@ -49,41 +49,55 @@
 (function(angular) {
     'use strict';
 
-    /**  @ignore */
-    var ngTestHarness = function(modules, options) {
+    /* A constant list of commonly used Angular providers
+     * These will be exposed through ngTestHarness()[provider]
+     * in a non-$ syntax, e.g. ngTestHarness().q
+     */
+    var providers = [
+        '$rootScope',
+        '$compile',
+        '$http',
+        '$httpBackend',
+        '$templateCache',
+        '$timeout',
+        '$interval',
+        '$browser',
+        '$q'
+    ];
+
+    /** @ignore */
+    var ngTestHarness = function(modules) {
 
         // Add in Angular, Sanitize, and Mock as default modules.
         modules.unshift('ng', 'ngSanitize', 'ngMock');
 
-        //Angular cookies
-        if (options &amp;&amp; options.cookies) {
-            modules.push('ngCookies');
-        }
-
         //Angular's services that will be used by the rest of the object's functions, and that should be externally accessible
         this.angularFactory = angular.injector(modules);
-        this.rootScope = this.angularFactory.get('$rootScope');
-        this.compile = this.angularFactory.get('$compile');
-        this.http = this.angularFactory.get('$http');
-        this.httpBackend = this.angularFactory.get('$httpBackend');
-        this.templates = this.angularFactory.get('$templateCache');
-        this.timeout = this.angularFactory.get('$timeout');
-        this.interval = this.angularFactory.get('$interval');
-        this.browser = this.angularFactory.get('$browser');
-        this.q = this.angularFactory.get('$q');
+
+        // Each factory gets placed on ngTestHarness, accessible through a non-$ method.
+        providers.forEach(function(provider) {
+            this[provider.slice(1)] = this.angularFactory.get(provider);
+        }, this);
 
         //if cookie mocking is requested, then add the needed pieces
-        if (options &amp;&amp; options.cookies) {
+        if (modules.indexOf('ngCookies') > -1) {
             this.cookieStore = this.angularFactory.get('$cookieStore');
             this.cookies = [];
+
+            /**
+             * @function handleCookie
+             * @desc Adds a cookie, by key and value, into the Angular $cookieStore.
+             * @param {string} key ID for the value.
+             * @param {object} value Value to be stored.
+             * @return the cookie information as determined by $cookieStore.
+             */
             this.handleCookie = function(key, value) {
                 if (value) {
                     this.cookieStore.put(key, value);
                     this.cookies.push(key);
-                    return true;
-                } else {
-                    return this.cookieStore.get(key);
                 }
+
+                return this.cookieStore.get(key);
             };
         }
     };
@@ -318,7 +332,7 @@
             @param {number} timeout The timeout promise to cancel. Will trigger the timeout's reject function.
         */
         cancelTimeout: function(timeout) {
-            if ( timeout ) {
+            if (timeout) {
                 this.timeout.cancel(timeout);
             }
         },
@@ -479,13 +493,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ngTestHarness.html">ngTestHarness</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addToRootScope">addToRootScope</a></li><li><a href="global.html#cancelTimeout">cancelTimeout</a></li><li><a href="global.html#clearContext">clearContext</a></li><li><a href="global.html#clearTemplateCache">clearTemplateCache</a></li><li><a href="global.html#compileElement">compileElement</a></li><li><a href="global.html#digest">digest</a></li><li><a href="global.html#flushHttp">flushHttp</a></li><li><a href="global.html#flushInterval">flushInterval</a></li><li><a href="global.html#flushTimeout">flushTimeout</a></li><li><a href="global.html#getIsolate">getIsolate</a></li><li><a href="global.html#getProvider">getProvider</a></li><li><a href="global.html#getScope">getScope</a></li><li><a href="global.html#isValidScope">isValidScope</a></li><li><a href="global.html#removeFromRootScope">removeFromRootScope</a></li><li><a href="global.html#setCustomVerb">setCustomVerb</a></li><li><a href="global.html#setDelete">setDelete</a></li><li><a href="global.html#setGet">setGet</a></li><li><a href="global.html#setPost">setPost</a></li><li><a href="global.html#setPut">setPut</a></li><li><a href="global.html#verifyHttp">verifyHttp</a></li><li><a href="global.html#verifyRootIsClean">verifyRootIsClean</a></li><li><a href="global.html#verifyTimeout">verifyTimeout</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ngTestHarness.html">ngTestHarness</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addToRootScope">addToRootScope</a></li><li><a href="global.html#cancelTimeout">cancelTimeout</a></li><li><a href="global.html#clearContext">clearContext</a></li><li><a href="global.html#clearTemplateCache">clearTemplateCache</a></li><li><a href="global.html#compileElement">compileElement</a></li><li><a href="global.html#digest">digest</a></li><li><a href="global.html#flushHttp">flushHttp</a></li><li><a href="global.html#flushInterval">flushInterval</a></li><li><a href="global.html#flushTimeout">flushTimeout</a></li><li><a href="global.html#getIsolate">getIsolate</a></li><li><a href="global.html#getProvider">getProvider</a></li><li><a href="global.html#getScope">getScope</a></li><li><a href="global.html#handleCookie">handleCookie</a></li><li><a href="global.html#isValidScope">isValidScope</a></li><li><a href="global.html#removeFromRootScope">removeFromRootScope</a></li><li><a href="global.html#setCustomVerb">setCustomVerb</a></li><li><a href="global.html#setDelete">setDelete</a></li><li><a href="global.html#setGet">setGet</a></li><li><a href="global.html#setPost">setPost</a></li><li><a href="global.html#setPut">setPut</a></li><li><a href="global.html#verifyHttp">verifyHttp</a></li><li><a href="global.html#verifyRootIsClean">verifyRootIsClean</a></li><li><a href="global.html#verifyTimeout">verifyTimeout</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha13</a> on Mon Jan 12 2015 15:46:23 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha13</a> on Tue Jan 13 2015 12:22:35 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>
