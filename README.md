@@ -9,7 +9,7 @@ Streamlines the boilerplate created by needing to inject dependencies for Angula
 
 Additional modules, should be included in the modules parameter.
 
-_Note: Loading ngCookies adds new functionality to the testing harness. (Please see handleCookie in the API)_
+_Note: Loading ngCookies adds new functionality to the testing harness. (Please see `handleCookie` in the API)_
 
 ##API
 <a href="api.md">API</a>
@@ -73,7 +73,7 @@ plugins: [
 ```
 ```javascript
 preprocessors: {
-    "'*.html': 'ng-html2js'""
+    "'*.html': 'ng-html2js'"
 }
 ```
 
