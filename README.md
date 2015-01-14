@@ -26,7 +26,7 @@ _Note: Loading ngCookies adds new functionality to the testing harness. (Please 
 3. Open the SpecRunner in a browser.
 
 ###Jasmine Modularized Templates Example
-```
+```javascript
 angular.module('templates-main', ['template.html']);
 
 angular.module('template.html', []).run(['$templateCache', function($templateCache) {
@@ -35,22 +35,22 @@ angular.module('template.html', []).run(['$templateCache', function($templateCac
 ```
 
 ###Jasmine SpecRunner Test Example
-```
+```javascript
 describe ("Load Sample\n", function (){
   var harness = new ngHarness([
       'sample',
       'templates-main'
   ]),
-    parent={
-      message:'Hello'
-    };
+  parent={
+    message:'Hello'
+  };
 
   it('Expect innerHTML to contain message', function (){
     expect(
       harness.compileElement('<sample-demo message="message"></sample-demo>', parent).html()
     ).toContain('Hello');
   });
-})
+});
 ```
 
 
@@ -66,19 +66,19 @@ describe ("Load Sample\n", function (){
 5. Add a filepath pattern that will include your html templates in the preprocessors section.
 6. Run Karma
 
-```
+```javascript
 plugins: [
     'karma-ng-html2js-preprocessor'
 ]
 ```
-```
+```javascript
 preprocessors: {
     "'*.html': 'ng-html2js'""
 }
 ```
 
 ###Karma Test Example (Using Jasmine)
-```
+```javascript
 describe ("Load Sample\n", function (){
   var harness = new ngHarness([
       'sample',
@@ -93,7 +93,7 @@ describe ("Load Sample\n", function (){
       harness.compileElement('<sample-demo message="message"></sample-demo>', parent).html()
     ).toContain('Hello');
   });
-})
+});
 
 ```
 
