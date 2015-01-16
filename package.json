@@ -1,7 +1,7 @@
 {
-  "name": "ngHarnessDemo",
+  "name": "ngTestHarness",
   "version": "0.1.0",
-  "description": "ngHarness Demo",
+  "description": "Angular Test Harness.",
   "repository": {
     "type": "git",
     "url": "git@github.gaikai.org:cloud/ngHarness.git"
