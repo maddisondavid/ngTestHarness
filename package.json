@@ -6,8 +6,8 @@
     "type": "git",
     "url": "git@github.gaikai.org:cloud/ngHarness.git"
   },
-  "author": "David Posin <dposin@gaikai.com>, <david.posin.smp@gmail.com",
-  "license": "",
+  "author": "David Posin <dposin@gaikai.com, <david.posin.smp@gmail.com>",
+  "license": "MIT",
   "dependencies": {
     "jsdoc": "^3.3.0-alpha13",
     "jsdoc-to-markdown": "^0.5.9",
