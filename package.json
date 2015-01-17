@@ -1,12 +1,17 @@
 {
   "name": "ngTestHarness",
   "version": "0.1.0",
-  "description": "Angular Test Harness.",
+  "description": "Creates a context for Angular unit tests and provides several convenience functions to streamline testing.",
+  "keywords": [
+    "angular",
+    "unit testing",
+    "harness"
+  ],
   "repository": {
     "type": "git",
-    "url": "git@github.gaikai.org:cloud/ngHarness.git"
+    "url": "https://github.com/gaikai/ngTestHarness"
   },
-  "author": "David Posin <dposin@gaikai.com, <david.posin.smp@gmail.com>",
+  "author": "David Posin <dposin@gaikai.com>, <david.posin.smp@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "jsdoc": "^3.3.0-alpha13",

@@ -36,8 +36,8 @@ angular.module('template.html', []).run(['$templateCache', function($templateCac
 
 ###Jasmine SpecRunner Test Example
 ```javascript
-describe ("Load Sample\n", function (){
-  var harness = new ngHarness([
+describe("Load Sample\n", function () {
+  var harness = new ngTestHarness([
       'sample',
       'templates-main'
   ]),
@@ -45,7 +45,7 @@ describe ("Load Sample\n", function (){
     message:'Hello'
   };
 
-  it('Expect innerHTML to contain message', function (){
+  it('Expect innerHTML to contain message', function () {
     expect(
       harness.compileElement('<sample-demo message="message"></sample-demo>', parent).html()
     ).toContain('Hello');
@@ -79,8 +79,8 @@ preprocessors: {
 
 ###Karma Test Example (Using Jasmine)
 ```javascript
-describe ("Load Sample\n", function (){
-  var harness = new ngHarness([
+describe("Load Sample\n", function () {
+  var harness = new ngTestHarness([
       'sample',
       'template.html'
   ]),
@@ -88,7 +88,7 @@ describe ("Load Sample\n", function (){
     message:'Hello'
   };
 
-  it('Expect innerHTML to contain message', function (){
+  it('Expect innerHTML to contain message', function () {
     expect(
       harness.compileElement('<sample-demo message="message"></sample-demo>', parent).html()
     ).toContain('Hello');
