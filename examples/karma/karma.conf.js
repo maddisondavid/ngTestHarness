@@ -6,22 +6,22 @@
  * export CHROME_BIN=/usr/bin/chromium-browser
  */
 var vendorLibs = [
-    "../vendor/angular.min.js",
-    "../vendor/angular-mocks.js",
-    "../vendor/angular-sanitize.js",
-    "../../ngHarness.js"
+    '../vendor/angular.min.js',
+    '../vendor/angular-mocks.js',
+    '../vendor/angular-sanitize.js',
+    '../../ngTestHarness.js'
 ];
 
 var templates = [
-    "template.html"
+    'template.html'
 ];
 
 var inCoverage = [
-    "../demo.js"
+    '../demo.js'
 ];
 
 var testSpecs = [
-    "karma.spec.js"
+    'karma.spec.js'
 ];
 
 module.exports = function (config) {
@@ -51,20 +51,12 @@ module.exports = function (config) {
         },
 
         port: 9876,
-
         runnerPort: 9100,
-
         colors: true,
-
         logLevel: config.LOG_ERROR,
-
         autoWatch: false,
-
         browsers: ['PhantomJS'],
-
         captureTimeout: 60000,
-
         singleRun: true
-
     });
 };
