@@ -438,7 +438,7 @@
          * @param {function} reject The reject function for the promise checking rootScope's phase.
          */
         verifyRootIsClean: function (resolve, reject) {
-            return this.q(function (resolve, reject) {
+            return this.q(function () {
                 if (this.rootScope.$$phase) {
                     resolve();
                 }
