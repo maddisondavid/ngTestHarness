@@ -22,5 +22,8 @@
     "karma-jasmine": "~0.2.0",
     "karma-ng-html2js-preprocessor": "^0.1.0",
     "karma-phantomjs-launcher": "~0.1.0"
+  },
+  "scripts": {
+    "test": "./node_modules/karma/bin/karma start test/karma.conf.js"
   }
 }
