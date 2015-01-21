@@ -8,6 +8,7 @@
 **Functions**
 
 * [handleCookie(key, value)](#handleCookie)
+* [clearCookies()](#clearCookies)
 * [compileElement(html, vars)](#compileElement)
 * [getIsolate(html, vars)](#getIsolate)
 * [getScope(html, vars)](#getScope)
@@ -28,7 +29,7 @@
 * [flushHttp()](#flushHttp)
 * [clearContext(scope)](#clearContext)
 * [digest(scope)](#digest)
-* [verifyRootIsClean()](#verifyRootIsClean)
+* [verifyRootIsClean(resolve, reject)](#verifyRootIsClean)
 * [getProvider(name)](#getProvider)
 
 **Typedefs**
@@ -59,6 +60,10 @@ Adds a cookie, by key and value, into the Angular $cookieStore.
 - value `object` - Value to be stored.  
 
 **Returns**:  - the cookie information as determined by $cookieStore.  
+<a name="clearCookies"></a>
+#clearCookies()
+Clears all cookies currently in the cookieStore.
+
 <a name="compileElement"></a>
 #compileElement(html, vars)
 Create the html context and scope
@@ -92,7 +97,7 @@ Returns the scope associated with the element (which will differ from the isolat
 <a name="isValidScope"></a>
 #isValidScope(scope)
 Validates an object to see if it is likely to be an Angular scope.
-            (Note: If there is a better way to determine scope, please suggest it.)
+(Note: If there is a better way to determine scope, please suggest it.)
 
 **Params**
 
@@ -200,12 +205,15 @@ Convenience function for causing http requests in the back end to fire (flushing
 
 <a name="clearContext"></a>
 #clearContext(scope)
-Makes sure there are no outstanding pieces (http, timeout, $$phase) sitting in the context that would indicate an incomplete test or interefere with future tests.  Consider putting this in the afterEach block.
+Makes sure there are no outstanding pieces (http, timeout, $$phase) sitting in the
+context that would indicate an incomplete test or interefere with future tests.
+Note: Consider putting this in the afterEach block.
 
 **Params**
 
 - scope `object` - The scope to check  
 
+**Type**: `Error`  
 <a name="digest"></a>
 #digest(scope)
 Convenience function to streamline calling a scope digest.  Initially a scope digest is called, then the http and timeout queues are flushed in case they have queued actions, and finally a digest is called again to process the results of the flush
@@ -214,9 +222,15 @@ Convenience function to streamline calling a scope digest.  Initially a scope di
 
 - scope `object` - The scope to digest  
 
+**Type**: `Error`  
 <a name="verifyRootIsClean"></a>
-#verifyRootIsClean()
+#verifyRootIsClean(resolve, reject)
 Convenience function to check that there are no digest operations in progress
+
+**Params**
+
+- resolve `function` - The resolver function for the promise checking rootScope's phase.  
+- reject `function` - The reject function for the promise checking rootScope's phase.  
 
 **Returns**: `Object` - Promise for the root scope check  
 <a name="getProvider"></a>
