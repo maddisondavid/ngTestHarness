@@ -74,6 +74,26 @@
 
                 return this.cookieStore.get(key);
             };
+
+            /**
+             * @function clearCookies
+             * @desc Clears all cookies currently in the cookieStore.
+             */
+            this.clearCookies = function () {
+                if (this.cookies) {
+                    if (this.cookies.length > 0) {
+                        angular.forEach(this.cookies, function(key) {
+                            try {
+                                this.cookieStore.remove(key);
+                            } catch (e) {
+                                return true;
+                            }
+                        }, this);
+                    }
+
+                    this.cookies = [];
+                }
+            };
         }
     };
 
@@ -272,7 +292,7 @@
          * @param {HttpOptions} opts Options object.
          */
         setCustomVerb: function (opts) {
-            this._callBackend ({
+            this._callBackend({
                 verb: opts.verb || 'GET',
                 url: opts.url || '',
                 requestData: opts.requestData || undefined,
@@ -332,7 +352,7 @@
          * @desc Convenience function to clear templates from the cache
          */
         clearTemplateCache: function () {
-            this.templates.removeAll();
+            this.templateCache.removeAll();
         },
 
         /**
@@ -341,6 +361,7 @@
          */
         verifyHttp: function () {
             this.httpBackend.verifyNoOutstandingRequest();
+            this.httpBackend.resetExpectations();
             this.clearTemplateCache();
         },
 
@@ -364,40 +385,21 @@
         clearContext: function (scope) {
             if (!this.isValidScope(scope)) throw new Error('The scope supplied is not valid.');
 
-            var self = this;
-
             // If we are testing cookies, clear them.
-            if (this.cookies) {
-                if (this.cookies.length > 0) {
-                    angular.forEach(this.cookies, function(key) {
-                        try {
-                            this.cookieStore.remove(key);
-                        } catch (e) {
-                            return true;
-                        }
-                    });
-                }
-
-                this.cookies = [];
-            }
+            angular.isFunction(this.clearCookies) && this.clearCookies();
 
             // Ensure there are no digest operations in progress.
             this.verifyRootIsClean(angular.noop, function (msg) {
-                self.rootScope.$$phase = '';
+                this.rootScope.$$phase = '';
                 throw new Error(msg);
-            });
+            }.bind(this));
 
-            // Verify timeout, http, and interval queues are empty.
-            this.timeout.verifyNoPendingTasks();
-            this.httpBackend.verifyNoOutstandingRequest();
-            this.httpBackend.resetExpectations();
+            // Verify timeout, and http queues are empty.
+            this.verifyTimeout();
+            this.verifyHttp();
 
             // Just for surety, destroy the scope so it doesn't stick around and affect the next test.
-            if (scope && angular.isFunction(scope.$destroy)) {
-                scope.$destroy();
-            }
-
-            return true;
+            scope.$destroy();
         },
 
         /**
@@ -411,14 +413,14 @@
 
             scope.$digest();
 
-            //flush timeouts, and make sure there are no more
+            // Flush timeouts, and make sure there are no more.
             if (this.browser.deferredFns.length > 0) {
-                this.timeout.flush();
-                this.timeout.verifyNoPendingTasks();
+                this.flushTimeout(0);
+                this.verifyTimeout();
             }
 
             try {
-                this.httpBackend.flush();
+                this.flushHttp();
             } catch (e) {
                 if (e.message !== 'No pending request to flush !') {
                     throw e;
@@ -432,18 +434,18 @@
          * @function verifyRootIsClean
          * @returns {Object} Promise for the root scope check
          * @desc Convenience function to check that there are no digest operations in progress
+         * @param {function} resolve The resolver function for the promise checking rootScope's phase.
+         * @param {function} reject The reject function for the promise checking rootScope's phase.
          */
-        verifyRootIsClean: function () {
-            var self = this;
-
-            return self.q(function (resolve, reject) {
-                if (self.rootScope.$$phase) {
+        verifyRootIsClean: function (resolve, reject) {
+            return this.q(function () {
+                if (this.rootScope.$$phase) {
                     resolve();
                 }
                 else {
-                    reject('rootScope is not clean - in ' + self.rootScope.$$phase);
+                    reject('rootScope is not clean - in ' + this.rootScope.$$phase);
                 }
-            })
+            }.bind(this));
         },
 
         /**
