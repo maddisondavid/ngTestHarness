@@ -1,4 +1,4 @@
-#Angular Testing Harness [![Build Status](https://travis-ci.org/treycordova/ngTestHarness.svg?branch=master)](https://travis-ci.org/treycordova/ngTestHarness)
+#Angular Testing Harness [![Build Status](https://travis-ci.org/gaikai/ngTestHarness.svg?branch=master)](https://travis-ci.org/gaikai/ngTestHarness)
 Testing harness for Angular scopes, controllers, and providers.
 Streamlines the boilerplate created by needing to inject dependencies for Angular Unit Testing.  Abstracts other features, and wraps setup and cleanup operations in easy to use functions.
 
