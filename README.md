@@ -114,6 +114,7 @@ describe("Load Sample\n", function () {
 
 ##Articles
 * [ngTestHarness: Strap in with this new testing helper for Angular](http://randomjavascript.blogspot.com/2015/01/ngtestharness-strap-in-with-this-new.html)
+* [Using ngTestHarness to simplify $httpBackend testing](http://randomjavascript.blogspot.com/2015/01/using-ngtestharness-to-simplify.html)
 
 Copyright (c) 2014-2015 Gaikai Inc. (A Sony Computer Entertainment Company).
 Visit us at https://gaikai.com/ for more information.
