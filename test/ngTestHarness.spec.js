@@ -91,7 +91,7 @@ describe('ngTestHarness', function() {
             // getIsolate, at this point, returns a valid scope, so it will
             // evaluate true.
             expect(this.harness.isValidScope(scope)).toBe(true);
-            
+
             scope = {};
             // Reducing scope to an empty object should ensure a failure.
             expect(this.harness.isValidScope(scope)).toBe(false);
@@ -122,7 +122,7 @@ describe('ngTestHarness', function() {
             var harness = new ngTestHarness();
 
             // We can confirm a `when` was set up by spying on it.
-            spyOn(harness.httpBackend, 'when').and.callThrough(); 
+            spyOn(harness.httpBackend, 'when').and.callThrough();
             harness._callBackend({
                 verb: 'GET',
                 url: 'http://example.com',
@@ -394,6 +394,59 @@ describe('ngTestHarness', function() {
             var $http = harness.getProvider('$http');
 
             expect($http).toBeDefined();
+        });
+    });
+
+    describe('getController', function() {
+        var harness;
+        beforeEach(function() {
+            angular.module('test',[]).controller('testCtrl',function($scope) {
+                $scope.message = "Hello";
+                $scope.messageCopy = "";
+
+                $scope.$watch('message',function(newVal, oldVal) {
+                    $scope.messageCopy = newVal;
+                });
+
+                return {
+                    getMessage : function(){return $scope.message;},
+                    setMessage : function(val){$scope.message = val;}
+                };
+            });
+            harness = new ngTestHarness(['test']);
+        });
+
+        it('should get controller instance with scope', function() {
+            var controller = harness.getController('testCtrl');
+
+            expect(controller.$get('message')).toBe("Hello");
+            expect(controller.$scope()).not.toBe(undefined);
+            expect(controller.$controller()).not.toBe(undefined);
+            expect(angular.isFunction(controller.$controller().setMessage)).toBe(true);
+        });
+
+        it('should call $watcher when $scope changed', function() {
+            var controller = harness.getController('testCtrl');
+
+            controller.$set('message', "Goodbye");
+            expect(controller.$get("messageCopy")).toBe("Goodbye");
+        });
+
+        it('should call $watcher when $scope changed in controller function', function() {
+            var controller = harness.getController('testCtrl');
+
+            controller.setMessage("Goodbye");
+            expect(controller.$get("messageCopy")).toBe("Goodbye");
+        });
+
+        it('should inject passed in $scope',function() {
+            var $scope = harness.rootScope.$new();
+            $scope.testMessage = "Bonjour";
+
+            var controller = harness.getController('testCtrl',{$scope:$scope});
+
+            expect(controller.$get("testMessage")).toBe("Bonjour");
+            expect(controller.$get("message")).toBe("Hello");
         });
     });
 });

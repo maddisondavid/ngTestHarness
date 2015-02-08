@@ -456,6 +456,77 @@
          */
         getProvider: function (name) {
             return this.angularFactory.get(name);
+        },
+
+        getController : function (name, injected) {
+            if (!injected) {
+                injected = {};
+            }
+
+            var $scope;
+            if (injected.$scope) {
+                $scope = injected.$scope;
+            }
+            else {
+                $scope = this.rootScope.$new();
+                injected.$scope = $scope;
+            }
+
+            var delegate = this.getProvider("$controller")(name, injected);
+            this.digest($scope);
+
+            var wrapper = function(harness) {
+                return {
+                    /**
+                    * @function $scope()
+                    * @returns {Object} The $scope of this controller
+                    */
+                    $scope : function() { return $scope; },
+
+                    /**
+                    * @function $set()
+                    * @returns {Object} Set a value on the controllers $scope.  $Digest is call automatically
+                    * @param {Object} name of the field on the $scope
+                    * @param {Object} actual value to set
+                    */
+                    $set : function(name, value) {
+                        $scope[name] = value;
+                        harness.digest($scope);
+                    },
+
+                    /**
+                    * @function $set()
+                    * @returns {Object} Get a value from the controllers $scope
+                    */
+                    $get : function(name) {
+                        return $scope[name];
+                    },
+
+                    /**
+                    * @function $controller()
+                    * @returns {Object} Get the actual wrapped controller
+                    */
+                    $controller : function() {
+                        return delegate;
+                    }
+                };
+            }(this);
+
+            // Wrap each controller function to call $digest after execution
+            for (var key in delegate) {
+                if (angular.isFunction(delegate[key])) {
+                    (function(fn, harness) {
+                        wrapper[fn] = function() {
+                            var result = delegate[fn].apply(delegate, arguments);
+                            harness.digest($scope);
+                            return result;
+                        };
+
+                    })(key, this);
+                }
+            }
+
+            return wrapper;
         }
     };
 
