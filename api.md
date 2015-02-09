@@ -9,6 +9,7 @@
 
 * [handleCookie(key, value)](#handleCookie)
 * [clearCookies()](#clearCookies)
+* [createChildScope(vars)](#createChildScope)
 * [compileElement(html, vars)](#compileElement)
 * [getIsolate(html, vars)](#getIsolate)
 * [getScope(html, vars)](#getScope)
@@ -31,6 +32,7 @@
 * [digest(scope)](#digest)
 * [verifyRootIsClean(resolve, reject)](#verifyRootIsClean)
 * [getProvider(name)](#getProvider)
+* [getController(name, vars)](#getController)
 
 **Typedefs**
 
@@ -48,7 +50,7 @@
 **Params**
 
 - modules `array` - Names of modules to be loaded into the context  
-- options `object` - Key value pairs for context creation.  Currently supports cookies: true  
+- options `Object` - Key value pairs for context creation.  Currently supports cookies: true  
 
 <a name="handleCookie"></a>
 #handleCookie(key, value)
@@ -57,13 +59,20 @@ Adds a cookie, by key and value, into the Angular $cookieStore.
 **Params**
 
 - key `string` - ID for the value.  
-- value `object` - Value to be stored.  
+- value `Object` - Value to be stored.  
 
 **Returns**:  - the cookie information as determined by $cookieStore.  
 <a name="clearCookies"></a>
 #clearCookies()
 Clears all cookies currently in the cookieStore.
 
+<a name="createChildScope"></a>
+#createChildScope(vars)
+**Params**
+
+- vars `Object` - For the purpose of scope inheritance, this contains variables that should be on the parent scope for the child to inherit  
+
+**Returns**: `Object` - $scope An angular scope.  
 <a name="compileElement"></a>
 #compileElement(html, vars)
 Create the html context and scope
@@ -71,7 +80,7 @@ Create the html context and scope
 **Params**
 
 - html `string` - The html to be used by the module to create the page DOM  
-- vars `object` - For the purpose of scope inheritance, this contains variables that should be on the parent scope for the child to inherit  
+- vars `Object` - For the purpose of scope inheritance, this contains variables that should be on the parent scope for the child to inherit  
 
 **Returns**: `string` - Html  
 <a name="getIsolate"></a>
@@ -81,9 +90,9 @@ If this is a directive with isolateScope then return it
 **Params**
 
 - html `string` - The html to be used by the module to create the page DOM  
-- vars `object` - For the purpose of scope inheritance, this contains variables that should be on the parent scope for the child to inherit  
+- vars `Object` - For the purpose of scope inheritance, this contains variables that should be on the parent scope for the child to inherit  
 
-**Returns**: `object` - Directive scope  
+**Returns**: `Object` - Directive scope  
 <a name="getScope"></a>
 #getScope(html, vars)
 Returns the scope associated with the element (which will differ from the isolate scope when used by a directive)
@@ -93,7 +102,7 @@ Returns the scope associated with the element (which will differ from the isolat
 - html `string` - The html to be used by the module to create the page DOM  
 - vars `object` - For the purpose of scope inheritance, this contains variables that should be on the parent scope for the child to inherit  
 
-**Returns**: `object` - Scope  
+**Returns**: `Object` - Scope  
 <a name="isValidScope"></a>
 #isValidScope(scope)
 Validates an object to see if it is likely to be an Angular scope.
@@ -101,7 +110,7 @@ Validates an object to see if it is likely to be an Angular scope.
 
 **Params**
 
-- scope `object` - An object to be tested for Angular scope identifiers.  
+- scope `Object` - An object to be tested for Angular scope identifiers.  
 
 **Returns**: `boolean` - Whether or not the scope is valid.  
 <a name="addToRootScope"></a>
@@ -211,7 +220,7 @@ Note: Consider putting this in the afterEach block.
 
 **Params**
 
-- scope `object` - The scope to check  
+- scope `Object` - The scope to check  
 
 **Type**: `Error`  
 <a name="digest"></a>
@@ -220,7 +229,7 @@ Convenience function to streamline calling a scope digest.  Initially a scope di
 
 **Params**
 
-- scope `object` - The scope to digest  
+- scope `Object` - The scope to digest  
 
 **Type**: `Error`  
 <a name="verifyRootIsClean"></a>
@@ -242,6 +251,16 @@ Pull a particular provider from the context
 - name `string` - The name of the provider to retrieve  
 
 **Returns**: `object` - Provider object  
+<a name="getController"></a>
+#getController(name, vars)
+Pull a particular controller from the context. A $scope variable is exposed on the returned controller.
+
+**Params**
+
+- name `string` - The name of the controller.  
+- vars `Object` - Parent scope variables that are merged into the new controller scope.  
+
+**Returns**: `Object` - Controller An angular controller with passed vars and proper scope.  
 <a name="HttpOptions"></a>
 #type: HttpOptions
 **Properties**
@@ -250,10 +269,10 @@ Pull a particular provider from the context
 - url `string` - The url to intercept (Can be a regular expression)  
 - requestData `string` - The data to send for mock matching purposes  
 - responseStatus `number` - Status code to send in the response, default 200  
-- responseData `string` | `object` - Message or data to return, default ''  
+- responseData `string` | `Object` - Message or data to return, default ''  
 - responseHeaders `string` - Headers to send back with the response, default undefined  
 - requestHeaders `string` - Headers to pass to the interceptor for mock matching purposes  
 - callback `function` - Function to call in the response instead of returning the response data array  
 - isWhen `boolean` - If true, this instantiates a when[verb].  This is useful for a standard response that most tests should trip.  Avoids creating new interceptions with every test.  If false or missing, this creates an except[verb] which only fires once and supercedes the whenGet.  If false and untripped, the test will fail. Defaults to false.  
 
-**Type**: `object`  
+**Type**: `Object`  
