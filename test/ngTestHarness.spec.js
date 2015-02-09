@@ -397,26 +397,32 @@ describe('ngTestHarness', function() {
         });
     });
 
-    describe('getController', function() {
+    describe('getController', function () {
         var harness;
-        beforeEach(function() {
-            angular.module('test',[]).controller('testCtrl',function($scope) {
-                $scope.message = "Hello";
-                $scope.messageCopy = "";
 
-                $scope.$watch('message',function(newVal, oldVal) {
+        beforeEach(function () {
+            angular.module('test', []).controller('testCtrl',function ($scope) {
+                $scope.message = 'Hello';
+                $scope.messageCopy = '';
+
+                $scope.$watch('message', function (newVal, oldVal) {
                     $scope.messageCopy = newVal;
                 });
 
                 return {
-                    getMessage : function(){return $scope.message;},
-                    setMessage : function(val){$scope.message = val;}
+                    getMessage: function () {
+                        return $scope.message;
+                    },
+                    setMessage: function (val) {
+                        $scope.message = val;
+                    }
                 };
             });
+
             harness = new ngTestHarness(['test']);
         });
 
-        it('should get controller instance with scope', function() {
+        it('should get controller instance with scope', function () {
             var controller = harness.getController('testCtrl');
 
             expect(controller).not.toBe(undefined);
@@ -425,15 +431,15 @@ describe('ngTestHarness', function() {
             expect(angular.isFunction(controller.setMessage)).toBe(true);
         });
 
-        it('should call $watcher when $scope changed', function() {
+        it('should call $watcher when $scope changed', function () {
             var controller = harness.getController('testCtrl');
 
-            controller.$scope.message = "Goodbye";
+            controller.$scope.message = 'Goodbye';
             harness.digest(controller.$scope);
-            expect(controller.$scope.messageCopy).toBe("Goodbye");
+            expect(controller.$scope.messageCopy).toBe('Goodbye');
         });
 
-        it('should call $watcher when $scope changed in controller function', function() {
+        it('should call $watcher when $scope changed in controller function', function () {
             var controller = harness.getController('testCtrl');
 
             controller.setMessage("Goodbye");
@@ -441,11 +447,13 @@ describe('ngTestHarness', function() {
             expect(controller.$scope.messageCopy).toBe("Goodbye");
         });
 
-        it('should inject passed in $scope',function() {
-            var controller = harness.getController('testCtrl', {testMessage: "Bonjour"});
+        it('should inject passed in $scope', function () {
+            var controller = harness.getController('testCtrl', {
+                testMessage: 'Bonjour'
+            });
 
-            expect(controller.$scope.testMessage).toBe("Bonjour");
-            expect(controller.$scope.message).toBe("Hello");
+            expect(controller.$scope.testMessage).toBe('Bonjour');
+            expect(controller.$scope.message).toBe('Hello');
         });
     });
 });
