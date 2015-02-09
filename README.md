@@ -108,6 +108,7 @@ describe("Load Sample\n", function () {
 * [Trey Cordova](https://github.com/treycordova)
 * [Kevin Kragenbrink](https://github.com/kkragenbrink)
 * Matt Furniss
+* [David Maddison](https://github.com/maddisondavid)
 
 ##License
 [MIT License](LICENSE.md)
