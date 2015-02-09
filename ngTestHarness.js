@@ -63,7 +63,7 @@
              * @function handleCookie
              * @desc Adds a cookie, by key and value, into the Angular $cookieStore.
              * @param {string} key ID for the value.
-             * @param {object} value Value to be stored.
+             * @param {Object} value Value to be stored.
              * @returns the cookie information as determined by $cookieStore.
              */
             this.handleCookie = function (key, value) {
@@ -101,16 +101,28 @@
         /**
          * @constructs ngTestHarness
          * @param {array} modules Names of modules to be loaded into the context
-         * @param {object} options Key value pairs for context creation.  Currently supports cookies: true
+         * @param {Object} options Key value pairs for context creation.  Currently supports cookies: true
          */
         constructor: ngTestHarness,
+
+        /**
+         * @function createChildScope
+         * @returns {Object} $scope An angular scope.
+         * @param {Object} vars For the purpose of scope inheritance, this contains variables that should be on the parent scope for the child to inherit
+         */
+        createChildScope: function (vars) {
+            var parentScope = this.rootScope.$new();
+            angular.extend(parentScope, angular.copy(vars || {}));
+
+            return parentScope.$new();
+        },
 
         /**
          * @function compileElement
          * @desc Create the html context and scope
          * @returns {string} Html
          * @param {string} html The html to be used by the module to create the page DOM
-         * @param {object} vars For the purpose of scope inheritance, this contains variables that should be on the parent scope for the child to inherit
+         * @param {Object} vars For the purpose of scope inheritance, this contains variables that should be on the parent scope for the child to inherit
          */
         compileElement: function (html, vars) {
             var compile = this.compile;
@@ -118,17 +130,14 @@
             var httpBackend = this.httpBackend;
             var timeout = this.timeout;
 
-            var parentScope = this.rootScope.$new();
-            angular.extend(parentScope, angular.copy(vars || {}));
-
-            var scope = parentScope.$new();
+            var scope = this.createChildScope(vars);
 
             // Invoke the injector prepared in the constructor.
             return this.angularFactory.invoke(function () {
                 var elm = compile(html)(scope);
 
                 // Digesting won't happen automatically since we are testing, so force it.
-                parentScope.$digest();
+                scope.$parent.$digest();
 
                 // If there are any back end calls waiting from the compile, flush them out.
                 try {
@@ -145,7 +154,7 @@
                 }
 
                 // In case the http or timeout caused a data bound element to change, force another digest.
-                parentScope.$digest();
+                scope.$parent.$digest();
 
                 return elm;
             });
@@ -154,9 +163,9 @@
         /**
          * @function getIsolate
          * @desc If this is a directive with isolateScope then return it
-         * @returns {object} Directive scope
+         * @returns {Object} Directive scope
          * @param {string} html The html to be used by the module to create the page DOM
-         * @param {object} vars For the purpose of scope inheritance, this contains variables that should be on the parent scope for the child to inherit
+         * @param {Object} vars For the purpose of scope inheritance, this contains variables that should be on the parent scope for the child to inherit
          */
         getIsolate: function (html, vars) {
             return this.compileElement(html, vars).isolateScope();
@@ -165,7 +174,7 @@
         /**
          * @function getScope
          * @desc Returns the scope associated with the element (which will differ from the isolate scope when used by a directive)
-         * @returns {object} Scope
+         * @returns {Object} Scope
          * @param {string} html The html to be used by the module to create the page DOM
          * @param {object} vars For the purpose of scope inheritance, this contains variables that should be on the parent scope for the child to inherit
          */
@@ -178,7 +187,7 @@
          * @description Validates an object to see if it is likely to be an Angular scope.
          * (Note: If there is a better way to determine scope, please suggest it.)
          * @returns {boolean} Whether or not the scope is valid.
-         * @param {object} scope An object to be tested for Angular scope identifiers.
+         * @param {Object} scope An object to be tested for Angular scope identifiers.
          */
         isValidScope: function (scope) {
             return typeof scope !== 'undefined' && typeof scope.$id === 'number';
@@ -209,12 +218,12 @@
 
         /**
          * @namespace HttpOptions
-         * @typedef {object} HttpOptions
+         * @typedef {Object} HttpOptions
          * @property {string} verb The http verb, default 'GET'
          * @property {string} url The url to intercept (Can be a regular expression)
          * @property {string} [requestData] The data to send for mock matching purposes
          * @property {number} [responseStatus] Status code to send in the response, default 200
-         * @property {string|object} [responseData] Message or data to return, default ''
+         * @property {string|Object} [responseData] Message or data to return, default ''
          * @property {string} [responseHeaders] Headers to send back with the response, default undefined
          * @property {string} [requestHeaders] Headers to pass to the interceptor for mock matching purposes
          * @property {function} [callback] Function to call in the response instead of returning the response data array
@@ -379,7 +388,7 @@
          * @description Makes sure there are no outstanding pieces (http, timeout, $$phase) sitting in the
          * context that would indicate an incomplete test or interefere with future tests.
          * Note: Consider putting this in the afterEach block.
-         * @param {object} scope The scope to check
+         * @param {Object} scope The scope to check
          * @throws {Error} An invalid scope cannot be cleared and therefore will throw an exception.
          */
         clearContext: function (scope) {
@@ -405,7 +414,7 @@
         /**
          * @function digest
          * @desc Convenience function to streamline calling a scope digest.  Initially a scope digest is called, then the http and timeout queues are flushed in case they have queued actions, and finally a digest is called again to process the results of the flush
-         * @param {object} scope The scope to digest
+         * @param {Object} scope The scope to digest
          * @throws {Error} An invalid scope cannot be cleared and therefore will throw an exception.
          */
         digest: function (scope) {
@@ -456,6 +465,26 @@
          */
         getProvider: function (name) {
             return this.angularFactory.get(name);
+        },
+
+        /**
+         * @function getController
+         * @desc Pull a particular controller from the context. A $scope variable is exposed on the returned controller.
+         * @returns {Object} Controller An angular controller with passed vars and proper scope.
+         * @param {string} name The name of the controller.
+         * @param {Object} vars Parent scope variables that are merged into the new controller scope.
+         */
+        getController: function (name, vars) {
+            var scope = this.createChildScope(vars);
+            var controller = this.getProvider('$controller')(name, {$scope: scope});
+
+            if (controller) {
+                // ensure we can access the newly created scope
+                controller.$scope = scope;
+                this.digest(controller.$scope);
+
+                return controller;
+            }
         }
     };
 
