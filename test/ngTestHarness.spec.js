@@ -419,34 +419,33 @@ describe('ngTestHarness', function() {
         it('should get controller instance with scope', function() {
             var controller = harness.getController('testCtrl');
 
-            expect(controller.$get('message')).toBe("Hello");
-            expect(controller.$scope()).not.toBe(undefined);
-            expect(controller.$controller()).not.toBe(undefined);
-            expect(angular.isFunction(controller.$controller().setMessage)).toBe(true);
+            expect(controller).not.toBe(undefined);
+            expect(controller.$scope).not.toBe(undefined);
+            expect(controller.$scope.message).toBe("Hello");
+            expect(angular.isFunction(controller.setMessage)).toBe(true);
         });
 
         it('should call $watcher when $scope changed', function() {
             var controller = harness.getController('testCtrl');
 
-            controller.$set('message', "Goodbye");
-            expect(controller.$get("messageCopy")).toBe("Goodbye");
+            controller.$scope.message = "Goodbye";
+            harness.digest(controller.$scope);
+            expect(controller.$scope.messageCopy).toBe("Goodbye");
         });
 
         it('should call $watcher when $scope changed in controller function', function() {
             var controller = harness.getController('testCtrl');
 
             controller.setMessage("Goodbye");
-            expect(controller.$get("messageCopy")).toBe("Goodbye");
+            harness.digest(controller.$scope);
+            expect(controller.$scope.messageCopy).toBe("Goodbye");
         });
 
         it('should inject passed in $scope',function() {
-            var $scope = harness.rootScope.$new();
-            $scope.testMessage = "Bonjour";
+            var controller = harness.getController('testCtrl', {testMessage: "Bonjour"});
 
-            var controller = harness.getController('testCtrl',{$scope:$scope});
-
-            expect(controller.$get("testMessage")).toBe("Bonjour");
-            expect(controller.$get("message")).toBe("Hello");
+            expect(controller.$scope.testMessage).toBe("Bonjour");
+            expect(controller.$scope.message).toBe("Hello");
         });
     });
 });
