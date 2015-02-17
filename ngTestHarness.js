@@ -473,7 +473,7 @@
          * @returns {Object} Controller An angular controller with passed vars and proper scope.
          * @param {string} name The name of the controller.
          * @param {Object} vars Parent scope variables that are merged into the new controller scope.
-         * @param {Object} injected Dependency overrides that are injected into the controller
+         * @param {Object} inject Dependency overrides that are injected into the controller
          */
         getController: function (name, vars, inject) {
             var scope = this.createChildScope(vars);
