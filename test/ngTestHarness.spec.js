@@ -456,4 +456,28 @@ describe('ngTestHarness', function() {
             expect(controller.$scope.message).toBe('Hello');
         });
     });
+
+    describe("getController with injected dependencies",function() {
+        var harness;
+
+        beforeEach(function () {
+            angular.module('test', []).controller('testCtrl',function ($scope, injectMe) {
+                return {
+                    getInjectedMessage: function () {
+                        return injectMe;
+                    }
+                };
+            });
+
+            harness = new ngTestHarness(['test']);
+        });
+
+        it("should inject service when controller created", function() {
+            var injectMe = "Hello Injected";
+            var harness = new ngTestHarness(["test"]);
+            var controller = harness.getController("testCtrl",{},{injectMe:injectMe});
+
+            expect(controller.getInjectedMessage()).toBe("Hello Injected");
+        });
+    });
 });
